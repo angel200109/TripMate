@@ -2,8 +2,9 @@
 import { chatbotMessage } from "@/store/index";
 import { storeToRefs } from "pinia";
 import { marked } from "marked";
-import TrainTicket from "./TrainTicket.vue";
-import { measureMemory } from "vm";
+import TrainTicket from "@/views/components/TrainTicket.vue";
+import CityWeather from "@/views/components/CityWeather.vue";
+
 marked.setOptions({
   breaks: true,
   gfm: true,
@@ -23,8 +24,17 @@ const { messages } = storeToRefs(store);
       v-html="marked(message.content as string)"
     ></div>
     <TrainTicket
-      v-if="message.role == 'assistant' && message.toolData"
+      v-if="
+        message.role == 'assistant' &&
+        message.functionName == 'get_train_tickets'
+      "
       :data="message.toolData"
+    />
+    <CityWeather
+      v-if="
+        message.role == 'assistant' && message.functionName == 'get_weather'
+      "
+      :weatherData="message.toolData"
     />
   </div>
 </template>

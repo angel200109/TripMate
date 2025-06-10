@@ -3,6 +3,8 @@ import {
   ApiResponse,
   QueryTrainTicketsType,
   ServerTrainTicketsType,
+  QueryWeatherType,
+  ServerQueryWeatherType,
 } from "@/types/index";
 import { chatbotMessage } from "@/store/index";
 const baseUrl = "http://127.0.0.1:3000";
@@ -23,17 +25,19 @@ const fetchApi = async (
   if (reqType == "json") {
     bodyData = JSON.stringify(body);
   } else if (method == "GET") {
+    // 如果是get请求，没有请求体
     bodyData = null;
   } else {
     bodyData = body;
   }
+
   const option: RequestInit = {
     method,
     headers,
     body: bodyData,
   };
-
   const response = await fetch(url, option);
+
   console.log(response); // 这个是fetch请求后，浏览器自带的响应封装，不是业务数据，业务数据需要.json()获取
 
   // -------------------对于普通请求/大模型请求，有不同的处理方法-------------------
@@ -60,6 +64,7 @@ const fetchApi = async (
       if (decodedString && decodedString !== "OK") {
         result = JSON.parse(decodedString); // 字符串转成对象
       }
+      [];
       chatbotMessage().serverData(result); // 存储大模型返回的数据
     }
   }
@@ -77,4 +82,17 @@ export const queryTrainTicketsApi = (
   data: QueryTrainTicketsType
 ): Promise<ApiResponse<ServerTrainTicketsType>> => {
   return fetchApi(`${baseUrl}/queryTrainTicket`, "POST", data, "notStream");
+};
+
+// 定义接口3：查询天气
+export const queryWeatherApi = (
+  data: QueryWeatherType
+): Promise<ApiResponse<ServerQueryWeatherType>> => {
+  return fetchApi(
+    `${baseUrl}/queryWeather?city=${data.city}"`,
+    "GET",
+    "null",
+    "notStream",
+    "notJSON"
+  );
 };

@@ -24,11 +24,11 @@ export type ChatMessage = {
   searchGoodsData?: ServerSearchGoodsType;
 };
 
-//----------------用户发送信息的格式----------------
-export type SendMessage = string | Array<TextContent | ImageContent>;
-
 // ----------------对话的格式----------------
 export type ConversationType = ChatMessage[];
+
+//----------------用户发送信息的格式----------------
+export type SendMessage = string | Array<TextContent | ImageContent>;
 
 // ----------------服务器响应的数据格式----------------
 export interface ApiResponse<T> {
@@ -63,3 +63,15 @@ export type ServerTrainTicketsType = {
   costtime: string;
   priceed: string;
 };
+
+export type QueryWeatherType = {
+  city: string;
+};
+
+export type ServerQueryWeatherType = {
+  daytime: string;
+  day_weather: string;
+  day_weather_pic: string;
+  day_air_temperature: string;
+  night_air_temperature: string;
+}[];

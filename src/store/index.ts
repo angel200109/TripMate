@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { SendMessage, ConversationType, ServerDataType } from "@/types/index";
-import { sendMessageApi, queryTrainTicketsApi } from "@/api/request";
+import {
+  sendMessageApi,
+  queryTrainTicketsApi,
+  queryWeatherApi,
+} from "@/api/request";
 import { scrollToBottom } from "@/utils/scroll";
 import { log } from "console";
 
@@ -12,14 +16,13 @@ export const chatbotMessage = defineStore("chatbotMessage", {
     // 方法1：用户发信息
     async sendMessage(content: SendMessage) {
       this.messages.push({ role: "user", content });
-      this.messages.push({ role: "assistant", content: "", progress: true });
+      this.messages.push({ role: "assistant", content: "", progress: true }); // 需要先加入一条回复,后端要记得删
       // 请求大模型回复
       await sendMessageApi({ chatMessages: this.messages });
       console.log("对话完毕了");
+      let aiMessage = this.messages[this.messages.length - 1];
+      aiMessage.progress = false;
       console.log(this.messages);
-      // this.messages
-      //   .map((m) => console.log(`${m.role}: ${JSON.stringify(m.content)}`))
-      //   .join("\n");
       scrollToBottom();
     },
 
@@ -31,14 +34,14 @@ export const chatbotMessage = defineStore("chatbotMessage", {
 
       // ----------------大模型回复的是正常内容----------------
       if (res && res.type == "content") {
-        console.log("*****大模型回复的是正常内容*****");
+        console.log("***** 大模型回复的是正常内容 *****");
         res.data = res.data.replace(/undefined/g, "");
         aiMessage.content += res.data;
       }
 
       // ----------------大模型回复的是function----------------
       if (res && res.type == "function") {
-        console.log("*****大模型回复的是function*****");
+        console.log("***** 大模型回复的是function *****");
         aiMessage["type"] = "function";
         // 1、若查询火车票
         if (res.functionName == "get_train_tickets") {
@@ -59,6 +62,19 @@ export const chatbotMessage = defineStore("chatbotMessage", {
           }
         }
         // 2、若查询天气
+        if (res.functionName == "get_weather") {
+          const { city } = res.data;
+          aiMessage.content = `正在为你查询${city}的天气`;
+          const queryRes = await queryWeatherApi({ city: city });
+          if (queryRes.serviceCode == 200) {
+            aiMessage.content = `以下是为你查询到的${city}的天气信息：`;
+            aiMessage["functionName"] = "get_weather";
+            aiMessage["toolData"] = queryRes.data;
+            console.log(queryRes.data);
+          } else {
+            aiMessage.content = queryRes.msg;
+          }
+        }
       }
     },
   },

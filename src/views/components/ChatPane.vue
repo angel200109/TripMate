@@ -2,7 +2,6 @@
 import SystemAvatar from "@/views/components/SystemAvatar.vue";
 import SmartSuggestions from "@/views/components/SmartSuggestions.vue";
 import ChatHistory from "@/views/components/ChatHistory.vue";
-import TrainTicket from "./TrainTicket.vue";
 import { scrollToBottom } from "@/utils/scroll";
 
 import { watch } from "vue";
@@ -24,7 +23,6 @@ watch(
     <SystemAvatar />
     <SmartSuggestions />
     <ChatHistory />
-    <TrainTicket />
   </div>
 </template>
 
