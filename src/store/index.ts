@@ -6,7 +6,6 @@ import {
   queryWeatherApi,
 } from "@/api/request";
 import { scrollToBottom } from "@/utils/scroll";
-import { log } from "console";
 
 export const chatbotMessage = defineStore("chatbotMessage", {
   state: () => ({
@@ -28,7 +27,7 @@ export const chatbotMessage = defineStore("chatbotMessage", {
 
     // 方法2：接收服务器端返回的信息
     async serverData(res: ServerDataType) {
-      let aiMessage = this.messages[this.messages.length - 1];
+      let aiMessage = this.messages[this.messages.length - 1]; // 大模型回复加入message中
       aiMessage.progress = false; // 关闭loading加载
       console.log(res);
 

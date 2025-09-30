@@ -24,8 +24,8 @@ export default defineConfig({
     },
   },
   server: {
-    host: "172.22.235.67",
-    port: 3000,
+    host: "172.22.208.32",
+    port: 8080,
     open: true,
   },
 });

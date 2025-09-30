@@ -7,7 +7,7 @@ import {
   ServerQueryWeatherType,
 } from "@/types/index";
 import { chatbotMessage } from "@/store/index";
-const baseUrl = "http://127.0.0.1:3000";
+const baseUrl = "http://172.22.208.32:3000";
 
 // 定义统一的请求函数
 const fetchApi = async (
@@ -43,11 +43,8 @@ const fetchApi = async (
   // -------------------对于普通请求/大模型请求，有不同的处理方法-------------------
   // 1.普通请求(请求数据库/请求第三方接口)
   if (response.ok && resType !== "stream") {
-    console.log("111");
-
     const result = response.json();
     console.log(result);
-
     return result;
   }
   // 2.大模型请求
