@@ -1,10 +1,14 @@
-<script setup></script>
+<script setup lang="ts">
+const { text } = defineProps<{ text: string }>();
+</script>
 
 <template>
-  <div><p>问一问</p></div>
+  <div>
+    <p>{{ text }}</p>
+  </div>
 </template>
 
-<style scoped>
+<style scoped lang="less">
 div {
   height: 50px;
   width: 100%;
@@ -13,7 +17,6 @@ div {
   top: 0;
   left: 0;
   z-index: 1000;
-
   p {
     text-align: center;
     line-height: 50px;

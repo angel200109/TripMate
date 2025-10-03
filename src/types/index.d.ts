@@ -6,12 +6,20 @@ export type ImageContent = {
   type: "image_url";
   image_url: { url: string };
 };
+
+// 搜素商品信息
 export type ServerSearchGoodsType = {
   _id: string;
   coverImage: string;
   contentTitle: string;
   price: number;
-}[]; // 对象数组
+}[];
+
+// 商品详情
+export type ServerGoodsDetailsItem = {
+  productImages: string[];
+} & ServerSearchGoodsType[number];
+// export type ServerGoodsDetails = ServerGoodsDetailsItem[];
 
 // 单条对话的格式
 export type ChatMessage = {
@@ -75,3 +83,7 @@ export type ServerQueryWeatherType = {
   day_air_temperature: string;
   night_air_temperature: string;
 }[];
+
+export type SearchGoodsType = {
+  userMessages: string;
+};

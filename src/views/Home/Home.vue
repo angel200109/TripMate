@@ -6,7 +6,7 @@ import ChatInputBar from "./components/ChatInputBar.vue";
 
 <template>
   <div class="home">
-    <HeaderNav />
+    <HeaderNav text="问一问"></HeaderNav>
     <ChatPane />
     <ChatInputBar />
   </div>
