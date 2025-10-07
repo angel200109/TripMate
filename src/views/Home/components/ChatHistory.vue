@@ -9,6 +9,7 @@ import CityWeather from "@/views/Home/components/CityWeather.vue";
 import { Image as VanImage } from "vant";
 import { ImageContent, TextContent } from "@/types";
 
+// Markdown 文本转成 HTML
 marked.setOptions({
   breaks: true,
   gfm: true,
@@ -54,13 +55,13 @@ const { messages } = storeToRefs(store);
       :data="message.toolData"
     />
     <CityWeather
-      v-if="
+      v-else-if="
         message.role == 'assistant' && message.functionName == 'get_weather'
       "
       :weatherData="message.toolData"
     />
     <ProductShowcase
-      v-if="
+      v-else-if="
         message.role == 'assistant' &&
         message.searchGoodsData &&
         message.searchGoodsData.length > 0

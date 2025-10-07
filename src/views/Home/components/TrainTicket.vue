@@ -25,20 +25,15 @@ console.log(ticketList);
         <div class="center">￥{{ ticket.priceed }}</div>
       </div>
     </div>
-    <div class="h"></div>
   </div>
 </template>
 
 <style scoped>
 .train-tickets {
   width: 100%;
-  height: 200px;
-  padding-bottom: 100px;
-  /* background-color: aqua; */
+  padding-bottom: 20px;
 }
-.h {
-  height: 20px;
-}
+
 .ticket {
   width: 85%;
   margin: auto;

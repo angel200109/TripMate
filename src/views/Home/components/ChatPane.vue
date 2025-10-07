@@ -14,7 +14,6 @@ watch(
   () => store.messages, // 监听消息数组
   () => {
     console.log("userScrolled的值", store.userScrolled);
-
     if (store.userScrolled) return;
     scrollToBottom();
   },
