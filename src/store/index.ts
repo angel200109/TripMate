@@ -48,7 +48,7 @@ export const chatbotMessage = defineStore("chatbotMessage", {
       await sendMessageApi({ chatMessages: this.messages });
       console.log("对话完毕了");
       let aiMessage = this.messages[this.messages.length - 1];
-      aiMessage.progress = false; // 用不用都无所谓
+      aiMessage.progress = false; // 用不用都无所谓，因为action2已经关闭了
       aiMessage.searchGoodsData = searchGoodsResult;
       console.log(this.messages);
       this.prohibit = false;

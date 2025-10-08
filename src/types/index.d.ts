@@ -6,6 +6,8 @@ export type ImageContent = {
   type: "image_url";
   image_url: { url: string };
 };
+// 用户发送信息的格式
+export type SendMessage = string | Array<TextContent | ImageContent>;
 
 // 搜素商品信息
 export type ServerSearchGoodsType = {
@@ -15,7 +17,7 @@ export type ServerSearchGoodsType = {
   price: number;
 }[];
 
-// 商品详情
+// 商品详情返回数据的格式
 export type ServerGoodsDetailsItem = {
   productImages: string[];
 } & ServerSearchGoodsType[number];
@@ -32,13 +34,10 @@ export type ChatMessage = {
   searchGoodsData?: ServerSearchGoodsType;
 };
 
-// ----------------对话的格式----------------
+// 对话的格式
 export type ConversationType = ChatMessage[];
 
-//----------------用户发送信息的格式----------------
-export type SendMessage = string | Array<TextContent | ImageContent>;
-
-// ----------------服务器响应的数据格式----------------
+// 服务器响应的数据格式
 export interface ApiResponse<T> {
   data: T;
   msg: string;
@@ -47,21 +46,21 @@ export interface ApiResponse<T> {
   code: number;
 }
 
-// ----------------大模型返回的res格式----------------
+// 大模型对话返回的格式
 export type ServerDataType = {
   type: string;
   functionName: string;
   data: any;
 };
 
-// ----------------查询火车票传递的参数格式----------------
+// 查询火车票传递的参数格式
 export type QueryTrainTicketsType = {
   departure: string;
   destination: string;
   date: string;
 };
 
-// ----------------查询火车票响应的数据格式----------------
+// 查询火车票响应的数据格式
 export type ServerTrainTicketsType = {
   trainno: string;
   station: string;
@@ -72,10 +71,12 @@ export type ServerTrainTicketsType = {
   priceed: string;
 };
 
+// 查询天气传递的参数格式
 export type QueryWeatherType = {
   city: string;
 };
 
+// 查询天气响应的数据格式
 export type ServerQueryWeatherType = {
   daytime: string;
   day_weather: string;
@@ -84,6 +85,7 @@ export type ServerQueryWeatherType = {
   night_air_temperature: string;
 }[];
 
+// 搜索商品传递的参数格式
 export type SearchGoodsType = {
   userMessages: string;
 };

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { goodsDetail } from "@/api/request";
 import { ServerSearchGoodsType } from "@/types/index";
 defineProps<{ searchGoodsData: ServerSearchGoodsType }>();
 import { useRouter } from "vue-router";
@@ -8,6 +7,7 @@ function goodsClick(id: string) {
   router.push(`/productDetail/${id}`);
 }
 </script>
+
 <template>
   <div class="productShowcase">
     <p class="title">为你推荐以下相关的旅行套餐，官方严选：</p>
@@ -27,6 +27,7 @@ function goodsClick(id: string) {
     </div>
   </div>
 </template>
+
 <style scoped lang="less">
 .productShowcase {
   width: 90%;

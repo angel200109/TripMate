@@ -48,7 +48,7 @@ const fetchApi = async (
     // 这个是fetch请求后，浏览器自带的响应封装，不是业务数据，业务数据需要.json()获取
 
     // -------------------对于普通请求/大模型请求，有不同的处理方法-------------------
-    // 1、resType !== "stream" 是普通请求(请求数据库/请求第三方接口)
+    // 1、resType !== "stream" 是普通请求(请求数据库/查询天气/查询火车票)
     if (response.ok && resType !== "stream") {
       const result = response.json();
       return result;

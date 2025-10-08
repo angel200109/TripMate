@@ -40,16 +40,13 @@ function handleScroll() {
 }
 
 // 节流函数
-function throttle<T extends (...args: any[]) => any>(
-  func: T,
-  delay: number
-): (...args: Parameters<T>) => void {
+function throttle(func: () => void, delay: number) {
   let lastCall = 0;
-  return function (this: any, ...args: Parameters<T>): void {
+  return () => {
     const now = Date.now();
     if (now - lastCall >= delay) {
       lastCall = now;
-      func.apply(this, args);
+      func();
     }
   };
 }
