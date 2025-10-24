@@ -25,8 +25,8 @@ defineProps<{ weatherData: ServerQueryWeatherType }>();
 <style scoped lang="less">
 .city-weather {
   width: 90%;
-  padding-bottom: 10px;
-  padding-top: 10px;
+  padding-bottom: 5px;
+  padding-top: 5px;
   margin: auto;
   margin-bottom: 20px;
   border-radius: 10px;
@@ -40,8 +40,8 @@ defineProps<{ weatherData: ServerQueryWeatherType }>();
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  padding: 10px 20px;
+  font-size: 13px;
+  padding: 2px 10px;
 }
 
 .weather-date,

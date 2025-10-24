@@ -62,6 +62,7 @@ export type QueryTrainTicketsType = {
 
 // 查询火车票响应的数据格式
 export type ServerTrainTicketsType = {
+  [x: string]: any;
   trainno: string;
   station: string;
   endstation: string;

@@ -8,6 +8,7 @@ import { ServerGoodsDetailsItem } from "@/types";
 const router = useRouter();
 const route = useRoute();
 const data = ref<ServerGoodsDetailsItem>({} as ServerGoodsDetailsItem); // ✅ 用 ref() 包装
+
 onMounted(async () => {
   const id = route.params.id as string;
   goodsDetail(id).then((res) => {

@@ -1,4 +1,34 @@
-<script setup></script>
+<script setup>
+import { computed, ref } from "vue";
+
+const travelQuestionList = ref([
+  "去北京旅游，有哪些必去的景点？",
+  "上海有哪些适合晚上逛的地方？",
+  "去西安看兵马俑还需要提前预约吗？",
+  "去张家界旅游几天比较合适？",
+  "重庆有哪些必吃的特色美食？",
+  "杭州西湖附近有哪些值得入住的酒店？",
+  "青岛有哪些拍照打卡的海边？",
+  "去三亚旅游的最佳季节是什么时候？",
+  "成都有哪些适合家庭出游的地方？",
+  "厦门鼓浪屿有哪些人少又好玩的景点？",
+  "桂林阳朔怎么玩比较省心？",
+  "哈尔滨冬天有什么必体验的活动？",
+  "内蒙古草原几月份去最合适？",
+  "去贵州看黄果树瀑布要注意些什么？",
+  "去拉萨旅游需要提前做哪些准备？",
+]);
+const count = ref(0);
+const travelQuestionListFiltered = computed(() =>
+  travelQuestionList.value.slice(count.value, count.value + 5)
+);
+const handleRefreshQuestions = () => {
+  count.value += 5;
+  if (count.value >= travelQuestionList.value.length) {
+    count.value = 0;
+  }
+};
+</script>
 
 <template>
   <div class="smart-suggestions">
@@ -11,18 +41,20 @@
         <img src="@\assets\icons\对话.svg" class="question-icon" alt="" />
         <span class="">猜你想问</span>
       </div>
-      <div class="question-refresh">
+      <div class="question-refresh" @click="handleRefreshQuestions">
         <img src="@\assets\icons\换一换.svg" class="question-icon" alt="" />
         <span class="">换一换</span>
       </div>
     </div>
 
     <div class="question-list">
-      <p class="question-item">帮我规划一个北京三日游的行程</p>
-      <p class="question-item">去云南避暑，有什么推荐的高原湖泊？</p>
-      <p class="question-item">去西北大环线是跟团好还是自驾好？</p>
-      <p class="question-item">去西藏需要提前准备什么药？</p>
-      <p class="question-item">推荐几个适合带小朋友去的历史景点</p>
+      <p
+        class="question-item"
+        v-for="item in travelQuestionListFiltered"
+        :key="index"
+      >
+        {{ item }}
+      </p>
     </div>
   </div>
 </template>
@@ -86,8 +118,8 @@
     text-align: left;
     border-radius: 5px;
     margin-bottom: 10px;
-    padding: 10px 15px;
-    font-size: 16px;
+    padding: 8px 15px;
+    font-size: 14px;
   }
 }
 </style>

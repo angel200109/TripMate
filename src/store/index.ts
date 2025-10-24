@@ -28,8 +28,8 @@ export const chatbotMessage = defineStore("chatbotMessage", {
       this.messages.push({ role: "assistant", content: "", progress: true }); // 需要先加入一条回复,状态为loading，后端要记得删最后一条，然后取最后一条才是用户的message
       this.userScrolled = false;
       this.prohibit = true; //大模型回复中，禁用其他按钮
-      await nextTick(); // 等 DOM 更新
-      scrollToBottom(); // ✅ 此时能滚动到底部
+      // await nextTick(); // 等 DOM 更新
+      // scrollToBottom(); // ✅ 此时能滚动到底部
 
       // 请求1：搜索商品
       let userMessages = "";
@@ -83,8 +83,11 @@ export const chatbotMessage = defineStore("chatbotMessage", {
           if (queryRes.serviceCode == 200) {
             aiMessage.content = `以下是为你查询到的${departure}到${destination}${date}出发的火车票信息:`;
             aiMessage["functionName"] = "get_train_tickets";
-            aiMessage["toolData"] = queryRes.data;
-            console.log(queryRes.data);
+            const filteredData = queryRes.data.filter(
+              (item: { priceed: string }) => item.priceed !== "-"
+            );
+            aiMessage["toolData"] = filteredData;
+            console.log(filteredData);
           } else {
             aiMessage.content = queryRes.msg;
           }

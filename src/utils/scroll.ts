@@ -5,5 +5,6 @@ export function scrollToBottom(selector = ".chat-pane") {
       top: container.scrollHeight,
       behavior: "smooth",
     });
+    console.log("已滑倒底部");
   }
 }

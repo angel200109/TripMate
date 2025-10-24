@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { scrollToBottom } from "@/utils/scroll";
-import { onMounted, onUnmounted, ref, watch } from "vue";
+import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { chatbotMessage } from "@/store/index";
 import SystemAvatar from "./SystemAvatar.vue";
 import SmartSuggestions from "./SmartSuggestions.vue";
@@ -12,9 +12,10 @@ const lastScrollTop = ref(0);
 // 监听信息数组的变化，往下滑
 watch(
   () => store.messages, // 监听消息数组
-  () => {
-    console.log("userScrolled的值", store.userScrolled);
+  async () => {
+    // console.log("userScrolled的值", store.userScrolled);
     if (store.userScrolled) return;
+    await nextTick();
     scrollToBottom();
   },
   { deep: true } // 必须加 deep 才能监听数组内部变化
@@ -32,7 +33,6 @@ function handleScroll() {
   if (!currentScroll) return;
   if (currentScroll > lastScrollTop.value) {
   } else {
-    console.log("用户往下滑了");
     store.userScrolled = true;
   }
   // console.log(currentScroll);
