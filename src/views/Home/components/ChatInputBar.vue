@@ -137,7 +137,7 @@ async function handleFileChange(event: Event) {
   formData.append("file", file);
   const fileUrl = await uploadFile(formData);
   console.log(fileUrl);
-  fileList.value[0].url = fileUrl.data;
+  fileList.value[0].url = "http://" + fileUrl.data;
   showImage.value = true;
 }
 </script>

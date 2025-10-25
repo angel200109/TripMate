@@ -12,6 +12,8 @@ import {
 import { chatbotMessage } from "@/store/index";
 import { showToast } from "vant";
 const baseUrl = "http://172.22.208.32:3000";
+// 部署要改
+// const baseUrl = "http://112.124.35.149";
 
 // 定义统一的请求函数
 const fetchApi = async (

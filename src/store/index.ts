@@ -32,24 +32,24 @@ export const chatbotMessage = defineStore("chatbotMessage", {
       // scrollToBottom(); // ✅ 此时能滚动到底部
 
       // 请求1：搜索商品
-      let userMessages = "";
-      if (typeof content == "string") {
-        userMessages = content;
-      } else {
-        userMessages = (content[0] as TextContent).text;
-      }
-      let searchGoodsResult: ServerSearchGoodsType = []; // 临时存放商品信息，等大模型回复完，再放入message.aiMessage
-      searchGoods({ userMessages }).then((res) => {
-        console.log(res.data);
-        searchGoodsResult = res.data;
-      });
+      // let userMessages = "";
+      // if (typeof content == "string") {
+      //   userMessages = content;
+      // } else {
+      //   userMessages = (content[0] as TextContent).text;
+      // }
+      // let searchGoodsResult: ServerSearchGoodsType = []; // 临时存放商品信息，等大模型回复完，再放入message.aiMessage
+      // searchGoods({ userMessages }).then((res) => {
+      //   console.log(res.data);
+      //   searchGoodsResult = res.data;
+      // });
 
       // 请求2：大模型回复
       await sendMessageApi({ chatMessages: this.messages });
       console.log("对话完毕了");
       let aiMessage = this.messages[this.messages.length - 1];
       aiMessage.progress = false; // 用不用都无所谓，因为action2已经关闭了
-      aiMessage.searchGoodsData = searchGoodsResult;
+      // aiMessage.searchGoodsData = searchGoodsResult;
       console.log(this.messages);
       this.prohibit = false;
     },

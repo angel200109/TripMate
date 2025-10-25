@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,11 +18,13 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.1",
-    "@vitejs/plugin-vue": "^5.2.2",
+    "@types/postcss-pxtorem": "^6.1.0",
+    "@vitejs/plugin-vue": "^5.2.4",
     "@vue/tsconfig": "^0.7.0",
     "less": "^4.3.0",
     "postcss": "^8.5.3",
     "postcss-pxtorem": "^6.1.0",
+    "rollup": "^4.52.5",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",
     "typescript": "~5.7.2",

@@ -1,6 +1,7 @@
-<script setup>
+<script setup lang="ts">
+import { chatbotMessage } from "@/store";
 import { computed, ref } from "vue";
-
+const store = chatbotMessage();
 const travelQuestionList = ref([
   "去北京旅游，有哪些必去的景点？",
   "上海有哪些适合晚上逛的地方？",
@@ -19,15 +20,21 @@ const travelQuestionList = ref([
   "去拉萨旅游需要提前做哪些准备？",
 ]);
 const count = ref(0);
-const travelQuestionListFiltered = computed(() =>
-  travelQuestionList.value.slice(count.value, count.value + 5)
-);
+const travelQuestionListFiltered = computed(() => {
+  return JSON.parse(JSON.stringify(travelQuestionList.value)).slice(
+    count.value,
+    count.value + 5
+  );
+});
 const handleRefreshQuestions = () => {
   count.value += 5;
   if (count.value >= travelQuestionList.value.length) {
     count.value = 0;
   }
 };
+function handleTravelQuestion(item: string) {
+  store.sendMessage(item);
+}
 </script>
 
 <template>
@@ -51,7 +58,7 @@ const handleRefreshQuestions = () => {
       <p
         class="question-item"
         v-for="item in travelQuestionListFiltered"
-        :key="index"
+        @click="handleTravelQuestion(item)"
       >
         {{ item }}
       </p>
