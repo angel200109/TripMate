@@ -11,9 +11,7 @@ import {
 } from "@/types/index";
 import { chatbotMessage } from "@/store/index";
 import { showToast } from "vant";
-const baseUrl = "http://172.22.208.32:3000";
-// 部署要改
-// const baseUrl = "http://112.124.35.149";
+const baseUrl = "/api";
 
 // 定义统一的请求函数
 const fetchApi = async (
@@ -21,7 +19,7 @@ const fetchApi = async (
   method: "POST" | "GET",
   body?: any,
   resType = "stream",
-  reqType = "json"
+  reqType = "json",
 ) => {
   const headers: HeadersInit = {
     ...(reqType == "json" && { "Content-Type": "application/json" }),
@@ -63,9 +61,10 @@ const fetchApi = async (
         if (done) break;
         // console.log(value); 此处value的类型是Uint8Array，需要解码
         const decoder = new TextDecoder("utf-8");
-        const decodedString = decoder.decode(value); // 解码：Uint8Array-->JSON字符串
+        // 解码：Uint8Array-->JSON字符串
+        const decodedString = decoder.decode(value);
         let result;
-        // 最后回复完，会回一个“OK”，这个没必要存了
+        // 最后回复完，会回一个"OK"，这个没必要存了
         if (decodedString && decodedString !== "OK") {
           result = JSON.parse(decodedString); // JSON字符串-->js对象
         }
@@ -111,41 +110,41 @@ export const sendMessageApi = (data: {
 
 // 定义接口2：查询火车票
 export const queryTrainTicketsApi = (
-  data: QueryTrainTicketsType
+  data: QueryTrainTicketsType,
 ): Promise<ApiResponse<ServerTrainTicketsType>> => {
   return fetchApi(`${baseUrl}/queryTrainTicket`, "POST", data, "notStream");
 };
 
 // 定义接口3：查询天气
 export const queryWeatherApi = (
-  data: QueryWeatherType
+  data: QueryWeatherType,
 ): Promise<ApiResponse<ServerQueryWeatherType>> => {
   return fetchApi(
     `${baseUrl}/queryWeather?city=${data.city}"`,
     "GET",
     "null",
     "notStream",
-    "notJSON"
+    "notJSON",
   );
 };
 
 // 定义接口4：搜索商品
 export const searchGoods = (
-  data: SearchGoodsType
+  data: SearchGoodsType,
 ): Promise<ApiResponse<ServerSearchGoodsType>> => {
   return fetchApi(`${baseUrl}/searchGoods`, "POST", data, "notStream");
 };
 
 // 定义接口5：根据商品id获取商品详情
 export const goodsDetail = (
-  id: string
+  id: string,
 ): Promise<ApiResponse<ServerGoodsDetailsItem>> => {
   return fetchApi(
     `${baseUrl}/goodsDetail?goodsId=${id}`,
     "GET",
     "null",
     "notStream",
-    "notJSON"
+    "notJSON",
   );
 };
 
@@ -157,6 +156,6 @@ export const uploadFile = (data: FormData): Promise<ApiResponse<string>> => {
     "POST",
     data,
     "notStream",
-    "notJSON"
+    "notJSON",
   );
 };
