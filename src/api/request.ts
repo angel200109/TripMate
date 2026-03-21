@@ -56,20 +56,33 @@ const fetchApi = async (
     // 2、resType == "stream"是大模型请求
     if (response.ok && resType == "stream") {
       const reader = response.body?.getReader(); // 这里流式读取
+      let buffer = ""; // 缓冲区，用于处理不完整的JSON
       while (reader) {
         const { done, value } = await reader.read();
         if (done) break;
         // console.log(value); 此处value的类型是Uint8Array，需要解码
         const decoder = new TextDecoder("utf-8");
         // 解码：Uint8Array-->JSON字符串
-        const decodedString = decoder.decode(value);
-        let result;
-        // 最后回复完，会回一个"OK"，这个没必要存了
-        if (decodedString && decodedString !== "OK") {
-          result = JSON.parse(decodedString); // JSON字符串-->js对象
+        const decodedString = decoder.decode(value, { stream: true });
+        console.log("📥 前端一次收到的原始数据:", decodedString); // 调试信息
+        buffer += decodedString; // 添加到缓冲区
+
+        // 按换行符分割，处理多个JSON对象
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || ""; // 保留最后一个可能不完整的部分
+
+        console.log("📊 分割后得到", lines.length, "个完整的JSON"); // 调试信息
+
+        for (const line of lines) {
+          if (line.trim() && line !== "OK") {
+            try {
+              const result = JSON.parse(line); // JSON字符串-->js对象
+              chatbotMessage().serverData(result); // 存储大模型返回的数据
+            } catch (e) {
+              console.error("JSON解析错误:", e, "原始数据:", line);
+            }
+          }
         }
-        [];
-        chatbotMessage().serverData(result); // 存储大模型返回的数据
       }
     }
     // 请求错误处理，后端有响应，但有错误

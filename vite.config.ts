@@ -6,7 +6,6 @@ import pxtorem from "postcss-pxtorem";
 // https://vite.dev/config/
 
 export default defineConfig({
-  base: "/FunTrip",
   plugins: [vue()],
   resolve: {
     alias: {
@@ -30,7 +29,7 @@ export default defineConfig({
     open: true,
     proxy: {
       "/api": {
-        target: "http://172.0.0.1:3000",
+        target: "http://127.0.0.1:3001",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },

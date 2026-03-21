@@ -18,7 +18,7 @@ watch(
     await nextTick();
     scrollToBottom();
   },
-  { deep: true } // 必须加 deep 才能监听数组内部变化
+  { deep: true }, // 必须加 deep 才能监听数组内部变化
 );
 
 // dom挂载后，为元素的滚动事件添加监听器
@@ -61,25 +61,19 @@ onUnmounted(() => {
 
 <template>
   <div class="chat-pane">
-    <SystemAvatar />
-    <SmartSuggestions />
+    <!-- <SystemAvatar /> -->
+    <!-- <SmartSuggestions /> -->
     <ChatHistory />
   </div>
 </template>
 
 <style scoped lang="less">
 .chat-pane {
-  background: linear-gradient(
-    to bottom,
-    #d0e8fa 0%,
-    #d0e8fa 5%,
-    #f7f8fa 25%,
-    #f7f8fa 100%
-  );
+  background-color: white;
   flex: 1;
-  margin-top: 50px;
-  margin-bottom: 120px;
-  padding-bottom: 30px;
+  margin-top: 70px;
+  // margin-bottom: 120px;
+  padding-bottom: 100px;
   height: 557px;
   overflow-y: auto;
   // border: 2px solid red;

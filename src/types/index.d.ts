@@ -37,6 +37,13 @@ export type ChatMessage = {
 // 对话的格式
 export type ConversationType = ChatMessage[];
 
+export type Conversation = {
+  id: string;
+  title: string;
+  groupLabel: string;
+  messages: ConversationType;
+};
+
 // 服务器响应的数据格式
 export interface ApiResponse<T> {
   data: T;

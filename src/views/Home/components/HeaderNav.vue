@@ -1,27 +1,42 @@
 <script setup lang="ts">
-const { text } = defineProps<{ text: string }>();
+defineProps<{ text: string }>();
+
+const emit = defineEmits<{
+  (e: "open-sidebar"): void;
+  (e: "create"): void;
+}>();
 </script>
 
 <template>
-  <div>
-    <p>{{ text }}</p>
+  <div class="header-nav">
+    <van-icon
+      name="bars"
+      class="header-icon left-icon"
+      @click="emit('open-sidebar')"
+    />
+    <van-icon name="add-o" class="header-icon right-icon" @click="emit('create')" />
   </div>
 </template>
 
 <style scoped lang="less">
-div {
-  height: 50px;
+.header-nav {
+  height: 70px;
   width: 100%;
-  background-color: #d0e8fa;
+  background-color: #fff;
   position: fixed;
   top: 0;
   left: 0;
   z-index: 1000;
-  p {
-    text-align: center;
-    line-height: 50px;
-    font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  box-sizing: border-box;
+
+  .header-icon {
+    font-size: 25px;
     color: #333;
+    cursor: pointer;
   }
 }
 </style>
