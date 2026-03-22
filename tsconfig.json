@@ -1,10 +1,13 @@
 {
+  "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "strict": true,
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"]
-    }
-  }
-  // "include": ["src", "env.d.ts"]
+    },
+    "module": "ESNext",
+    "target": "ES2022",
+    "moduleResolution": "bundler"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

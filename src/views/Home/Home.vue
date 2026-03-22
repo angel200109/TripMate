@@ -5,7 +5,7 @@ import HeaderNav from "./components/HeaderNav.vue";
 import ChatPane from "./components/ChatPane.vue";
 import ChatInputBar from "./components/ChatInputBar.vue";
 import ConversationSidebar from "./components/ConversationSidebar.vue";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const store = chatbotMessage();
@@ -24,10 +24,14 @@ const handleSelectConversation = (id: string) => {
   router.push(`/chat/${id}`);
 };
 
+onMounted(async () => {
+  await store.loadConversations();
+});
+
 watch(
   () => route.params.id,
-  (id) => {
-    store.syncConversationByRoute(typeof id === "string" ? id : undefined);
+  async (id) => {
+    await store.syncConversationByRoute(typeof id === "string" ? id : undefined);
   },
   { immediate: true }
 );

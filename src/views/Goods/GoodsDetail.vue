@@ -3,8 +3,7 @@ import { goodsDetail } from "@/api/request";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { onMounted, ref } from "vue";
-import { scrollToBottom } from "@/utils/scroll";
-import { ServerGoodsDetailsItem } from "@/types";
+import type { ServerGoodsDetailsItem } from "@/types/index";
 const router = useRouter();
 const route = useRoute();
 const data = ref<ServerGoodsDetailsItem>({} as ServerGoodsDetailsItem); // ✅ 用 ref() 包装

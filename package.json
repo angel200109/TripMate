@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "amfe-flexible": "^2.2.1",
+    "dompurify": "^3.3.3",
     "marked": "^15.0.12",
+    "mockjs": "^1.1.0",
     "pinia": "^3.0.2",
     "vant": "^4.9.21",
     "vue": "^3.5.13",

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { scrollToBottom } from "@/utils/scroll";
-import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { nextTick, onMounted, onUnmounted, watch } from "vue";
 import { chatbotMessage } from "@/store/index";
-import SystemAvatar from "./SystemAvatar.vue";
-import SmartSuggestions from "./SmartSuggestions.vue";
 import ChatHistory from "./ChatHistory.vue";
 
 const store = chatbotMessage();
-const lastScrollTop = ref(0);
+const BOTTOM_OFFSET = 40;
 
 // 监听信息数组的变化，往下滑
 watch(
@@ -22,6 +20,15 @@ watch(
 );
 
 // dom挂载后，为元素的滚动事件添加监听器
+watch(
+  () => store.prohibit,
+  async (prohibit) => {
+    if (prohibit || store.userScrolled) return;
+    await nextTick();
+    scrollToBottom();
+  },
+);
+
 onMounted(() => {
   const chatPane = document.querySelector(".chat-pane");
   chatPane?.addEventListener("scroll", throttleScroll);
@@ -29,14 +36,12 @@ onMounted(() => {
 
 function handleScroll() {
   const chatPane = document.querySelector(".chat-pane");
-  const currentScroll = chatPane?.scrollTop;
-  if (!currentScroll) return;
-  if (currentScroll > lastScrollTop.value) {
-  } else {
-    store.userScrolled = true;
-  }
-  // console.log(currentScroll);
-  lastScrollTop.value = currentScroll;
+  if (!chatPane) return;
+
+  const distanceToBottom =
+    chatPane.scrollHeight - chatPane.scrollTop - chatPane.clientHeight;
+
+  store.userScrolled = distanceToBottom > BOTTOM_OFFSET;
 }
 
 // 节流函数
@@ -73,7 +78,7 @@ onUnmounted(() => {
   flex: 1;
   margin-top: 70px;
   // margin-bottom: 120px;
-  padding-bottom: 100px;
+  margin-bottom: 100px;
   height: 557px;
   overflow-y: auto;
   // border: 2px solid red;

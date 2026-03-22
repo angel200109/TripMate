@@ -27,6 +27,7 @@ export type ServerGoodsDetailsItem = {
 export type ChatMessage = {
   role: "user" | "assistant";
   content: SendMessage;
+  rawContent?: string;
   toolData?: any; // 存储返回的函数调用工具数据
   type?: "function"; // 是单纯对话还是含义工具调用的数据
   functionName?: string; // 函数名称

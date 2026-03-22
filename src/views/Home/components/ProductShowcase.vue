@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ServerSearchGoodsType } from "@/types/index";
+import type { ServerSearchGoodsType } from "@/types/index";
 defineProps<{ searchGoodsData: ServerSearchGoodsType }>();
 import { useRouter } from "vue-router";
 const router = useRouter();

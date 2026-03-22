@@ -3,7 +3,7 @@ export function scrollToBottom(selector = ".chat-pane") {
   if (container) {
     container.scrollTo({
       top: container.scrollHeight,
-      behavior: "smooth",
+      behavior: "auto",
     });
     console.log("已滑倒底部");
   }

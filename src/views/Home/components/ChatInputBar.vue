@@ -64,12 +64,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { showToast } from "vant";
 import { chatbotMessage } from "@/store/index";
 import { uploadFile } from "@/api/request";
-import { ImageContent, TextContent } from "@/types";
+import type { ImageContent, TextContent } from "@/types";
 
 const fileList = ref([
   {
@@ -77,11 +77,16 @@ const fileList = ref([
   },
 ]);
 
-const inputContent = ref("");
 const store = chatbotMessage();
 const router = useRouter();
 const fileInput = ref<HTMLInputElement | null>(null);
 const showImage = ref(false);
+const inputContent = computed({
+  get: () => store.draftInput,
+  set: (value: string) => {
+    store.draftInput = value;
+  },
+});
 
 function beforeDelete() {
   fileList.value[0].url = "";
@@ -94,21 +99,22 @@ async function navigateToCurrentConversation() {
 }
 
 async function handleQueryTrainTicket() {
-  store.ensureConversation("帮我查询火车票");
+  await store.ensureConversation("帮我查询火车票");
   await navigateToCurrentConversation();
   await store.sendMessage("帮我查询火车票");
 }
 
 async function handleQueryWeather() {
-  store.ensureConversation("帮我查询天气");
+  await store.ensureConversation("帮我查询天气");
   await navigateToCurrentConversation();
   await store.sendMessage("帮我查询天气");
 }
 
 async function handleSend() {
   if (inputContent.value != "" && fileList.value[0].url) {
+    const currentInput = inputContent.value;
     const sendImageAndText: Array<TextContent | ImageContent> = [
-      { type: "text", text: inputContent.value || "" },
+      { type: "text", text: currentInput || "" },
       {
         type: "image_url",
         image_url: {
@@ -116,17 +122,18 @@ async function handleSend() {
         },
       },
     ];
-    store.ensureConversation(sendImageAndText);
+    await store.ensureConversation(sendImageAndText);
     await navigateToCurrentConversation();
-    await store.sendMessage(sendImageAndText);
+    store.draftInput = "";
     fileList.value[0].url = "";
     showImage.value = false;
-    inputContent.value = "";
+    await store.sendMessage(sendImageAndText);
   } else if (inputContent.value != "") {
-    store.ensureConversation(inputContent.value);
+    const currentInput = inputContent.value;
+    await store.ensureConversation(currentInput);
     await navigateToCurrentConversation();
-    await store.sendMessage(inputContent.value);
-    inputContent.value = "";
+    store.draftInput = "";
+    await store.sendMessage(currentInput);
   }
 }
 
@@ -218,8 +225,9 @@ async function handleFileChange(event: Event) {
   display: flex;
   flex-direction: row;
   align-items: center;
+  border: 1px solid #cfd4dc;
   border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   background-color: white;
   margin: auto;
 

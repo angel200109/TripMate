@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ServerTrainTicketsType } from "@/types/index";
+import type { ServerTrainTicketsType } from "@/types/index";
 const { data: ticketList } = defineProps<{ data: ServerTrainTicketsType[] }>();
 </script>
 

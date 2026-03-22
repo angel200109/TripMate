@@ -1,6 +1,7 @@
-import {
+import type {
   ConversationType,
   ApiResponse,
+  Conversation,
   QueryTrainTicketsType,
   ServerTrainTicketsType,
   QueryWeatherType,
@@ -16,13 +17,14 @@ const baseUrl = "/api";
 // 定义统一的请求函数
 const fetchApi = async (
   url: string,
-  method: "POST" | "GET",
+  method: "POST" | "GET" | "PATCH" | "DELETE",
   body?: any,
   resType = "stream",
   reqType = "json",
 ) => {
   const headers: HeadersInit = {
     ...(reqType == "json" && { "Content-Type": "application/json" }),
+    ...(resType == "stream" && { Accept: "text/event-stream" }),
   };
   let bodyData = null;
   if (reqType == "json") {
@@ -52,6 +54,54 @@ const fetchApi = async (
     if (response.ok && resType !== "stream") {
       const result = response.json();
       return result;
+    }
+    if (response.ok && resType == "stream") {
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      const store = chatbotMessage();
+      console.log("SSE stream connected:", url);
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunkText = decoder.decode(value, { stream: true });
+        console.log("SSE chunk:", chunkText);
+        buffer += chunkText;
+        const events = buffer.split("\n\n");
+        buffer = events.pop() || "";
+
+        for (const eventText of events) {
+          console.log("SSE eventText:", eventText);
+          const lines = eventText
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean);
+          const eventName = lines
+            .filter((line) => line.startsWith("event:"))
+            .map((line) => line.slice(6).trim())[0];
+          const dataText = lines
+            .filter((line) => line.startsWith("data:"))
+            .map((line) => line.slice(5).trim())
+            .join("\n");
+
+          if (!dataText || eventName === "done") {
+            continue;
+          }
+
+          try {
+            const result = JSON.parse(dataText);
+            console.log("SSE result:", result);
+            store.serverData(result);
+          } catch (e) {
+            console.error("SSE parse error:", e, dataText);
+          }
+        }
+      }
+
+      store.finishStreamingMessage();
+      return;
     }
     // 2、resType == "stream"是大模型请求
     if (response.ok && resType == "stream") {
@@ -108,6 +158,7 @@ const fetchApi = async (
       showToast({ message: status });
     }
   } catch (error) {
+    chatbotMessage().finishStreamingMessage();
     // 后端没开
     console.error("网络请求失败:", error);
     showToast({ message: "网络连接失败" });
@@ -117,8 +168,57 @@ const fetchApi = async (
 // 定义接口1：用户发送信息
 export const sendMessageApi = (data: {
   chatMessages: ConversationType;
-}): Promise<ApiResponse<Buffer>> => {
+}): Promise<void> => {
   return fetchApi(`${baseUrl}/chatMessage`, "POST", data);
+};
+
+export const getConversationsApi = (): Promise<ApiResponse<Conversation[]>> => {
+  return fetchApi(
+    `${baseUrl}/conversations`,
+    "GET",
+    null,
+    "notStream",
+    "notJSON",
+  );
+};
+
+export const getConversationDetailApi = (
+  id: string,
+): Promise<ApiResponse<Conversation>> => {
+  return fetchApi(
+    `${baseUrl}/conversations/${id}`,
+    "GET",
+    null,
+    "notStream",
+    "notJSON",
+  );
+};
+
+export const createConversationApi = (data: {
+  title: string;
+  groupLabel: string;
+  messages: ConversationType;
+}): Promise<ApiResponse<Conversation>> => {
+  return fetchApi(`${baseUrl}/conversations`, "POST", data, "notStream");
+};
+
+export const updateConversationApi = (
+  id: string,
+  data: Partial<Conversation>,
+): Promise<ApiResponse<Conversation>> => {
+  return fetchApi(`${baseUrl}/conversations/${id}`, "PATCH", data, "notStream");
+};
+
+export const deleteConversationApi = (
+  id: string,
+): Promise<ApiResponse<boolean>> => {
+  return fetchApi(
+    `${baseUrl}/conversations/${id}`,
+    "DELETE",
+    null,
+    "notStream",
+    "notJSON",
+  );
 };
 
 // 定义接口2：查询火车票
@@ -133,7 +233,7 @@ export const queryWeatherApi = (
   data: QueryWeatherType,
 ): Promise<ApiResponse<ServerQueryWeatherType>> => {
   return fetchApi(
-    `${baseUrl}/queryWeather?city=${data.city}"`,
+    `${baseUrl}/queryWeather?city=${data.city}`,
     "GET",
     "null",
     "notStream",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ServerQueryWeatherType } from "@/types/index";
+import type { ServerQueryWeatherType } from "@/types/index";
 defineProps<{ weatherData: ServerQueryWeatherType }>();
 </script>
 
