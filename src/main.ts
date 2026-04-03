@@ -5,6 +5,7 @@ import router from "./router/index";
 import "amfe-flexible";
 import { createPinia } from "pinia";
 import "vant/lib/index.css";
+import "vue-virtual-scroller/dist/vue-virtual-scroller.css";
 import { Uploader } from "vant";
 import { Loading } from "vant";
 import { Icon } from "vant";

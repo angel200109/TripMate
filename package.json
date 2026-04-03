@@ -9,16 +9,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/fetch-event-source": "^2.0.1",
     "amfe-flexible": "^2.2.1",
     "dompurify": "^3.3.3",
+    "github-markdown-css": "^5.9.0",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.40",
+    "markdown-it": "^14.1.1",
+    "markdown-it-texmath": "^1.0.0",
     "marked": "^15.0.12",
     "mockjs": "^1.1.0",
     "pinia": "^3.0.2",
     "vant": "^4.9.21",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.0",
+    "vue-virtual-scroller": "^2.0.0-beta.10"
   },
   "devDependencies": {
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.14.1",
     "@types/postcss-pxtorem": "^6.1.0",
     "@vitejs/plugin-vue": "^5.2.4",

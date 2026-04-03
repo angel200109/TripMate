@@ -8,7 +8,6 @@ import type {
   ChatMessage,
 } from "@/types/index";
 import {
-  sendMessageApi,
   getConversationsApi,
   getConversationDetailApi,
   createConversationApi,
@@ -16,10 +15,69 @@ import {
   queryTrainTicketsApi,
   queryWeatherApi,
 } from "@/api/request";
+import { sendMessageByFetchEventSourceApi } from "@/api/fetchEventSourceRequest";
 import { Typewriter } from "@/utils/typewriter";
+import { perfTracker } from "@/utils/perf";
+
+let messageIdSeed = 0;
+
+const createMessageId = () => {
+  messageIdSeed += 1;
+  return `msg-${Date.now()}-${messageIdSeed}`;
+};
+
+const ensureMessageId = (message: ChatMessage): ChatMessage => ({
+  ...message,
+  id: message.id || createMessageId(),
+});
+
+const normalizeMessages = (messages: ConversationType): ConversationType =>
+  messages.map((message) => ensureMessageId(message));
 
 const cloneMessages = (messages: ConversationType): ConversationType =>
-  JSON.parse(JSON.stringify(messages)) as ConversationType;
+  normalizeMessages(
+    JSON.parse(JSON.stringify(messages)) as ConversationType,
+  );
+
+const createBulkMockMessages = (count: number): ConversationType => {
+  const messages: ConversationType = [];
+
+  for (let index = 1; index <= count; index += 1) {
+    const label = String(index).padStart(3, "0");
+    messages.push(
+      ensureMessageId({
+        role: "user",
+        content: `Mock question ${label}`,
+      }),
+    );
+    messages.push(
+      ensureMessageId({
+        role: "assistant",
+        content: `Mock answer ${label}`,
+      }),
+    );
+  }
+
+  return messages;
+};
+
+const expandFirstMockConversation = (conversations: Conversation[]) => {
+  const firstConversation = conversations.find((item) => item.id === "session-1");
+  if (!firstConversation) {
+    return conversations;
+  }
+
+  if (firstConversation.messages.length >= 1000) {
+    return conversations;
+  }
+
+  firstConversation.messages = [
+    ...normalizeMessages(firstConversation.messages),
+    ...createBulkMockMessages(500),
+  ];
+
+  return conversations;
+};
 
 const getConversationTitle = (content: SendMessage) => {
   const text =
@@ -77,9 +135,9 @@ export const chatbotMessage = defineStore("chatbotMessage", {
   actions: {
     async loadConversations() {
       const response = await getConversationsApi();
-      this.conversations = JSON.parse(
-        JSON.stringify(response.data),
-      ) as Conversation[];
+      this.conversations = expandFirstMockConversation(
+        JSON.parse(JSON.stringify(response.data)) as Conversation[],
+      );
     },
 
     syncCurrentConversation() {
@@ -150,13 +208,13 @@ export const chatbotMessage = defineStore("chatbotMessage", {
       await this.ensureConversation(content);
       flushActiveTypewriter();
 
-      this.messages.push({ role: "user", content });
-      this.messages.push({
+      this.messages.push(ensureMessageId({ role: "user", content }));
+      this.messages.push(ensureMessageId({
         role: "assistant",
         content: "",
         rawContent: "",
         progress: true,
-      });
+      }));
       this.syncCurrentConversation();
       this.userScrolled = false;
       this.prohibit = true;
@@ -173,7 +231,7 @@ export const chatbotMessage = defineStore("chatbotMessage", {
       //   searchGoodsResult = res.data;
       // });
 
-      await sendMessageApi({ chatMessages: this.messages });
+      await sendMessageByFetchEventSourceApi({ chatMessages: this.messages });
       const aiMessage = this.messages[this.messages.length - 1];
       aiMessage.progress = false;
       this.syncCurrentConversation();
@@ -199,17 +257,17 @@ export const chatbotMessage = defineStore("chatbotMessage", {
       }
 
       this.messages.pop();
-      this.messages.push({
+      this.messages.push(ensureMessageId({
         role: "assistant",
         content: "",
         rawContent: "",
         progress: true,
-      });
+      }));
       this.syncCurrentConversation();
       this.userScrolled = false;
       this.prohibit = true;
 
-      await sendMessageApi({ chatMessages: this.messages });
+      await sendMessageByFetchEventSourceApi({ chatMessages: this.messages });
       const aiMessage = this.messages[this.messages.length - 1];
       aiMessage.progress = false;
       this.syncCurrentConversation();
@@ -223,6 +281,7 @@ export const chatbotMessage = defineStore("chatbotMessage", {
     finishStreamingMessage() {
       flushActiveTypewriter();
       this.syncCurrentConversation();
+      perfTracker.endStream("completed");
     },
 
     async syncConversationByRoute(id?: string) {

@@ -7,35 +7,11 @@ import ChatHistory from "./ChatHistory.vue";
 const store = chatbotMessage();
 const BOTTOM_OFFSET = 40;
 
-// 监听信息数组的变化，往下滑
-watch(
-  () => store.messages, // 监听消息数组
-  async () => {
-    // console.log("userScrolled的值", store.userScrolled);
-    if (store.userScrolled) return;
-    await nextTick();
-    scrollToBottom();
-  },
-  { deep: true }, // 必须加 deep 才能监听数组内部变化
-);
-
-// dom挂载后，为元素的滚动事件添加监听器
-watch(
-  () => store.prohibit,
-  async (prohibit) => {
-    if (prohibit || store.userScrolled) return;
-    await nextTick();
-    scrollToBottom();
-  },
-);
-
-onMounted(() => {
-  const chatPane = document.querySelector(".chat-pane");
-  chatPane?.addEventListener("scroll", throttleScroll);
-});
+const getScrollContainer = () =>
+  document.querySelector(".chat-history-scroller") as HTMLElement | null;
 
 function handleScroll() {
-  const chatPane = document.querySelector(".chat-pane");
+  const chatPane = getScrollContainer();
   if (!chatPane) return;
 
   const distanceToBottom =
@@ -44,7 +20,6 @@ function handleScroll() {
   store.userScrolled = distanceToBottom > BOTTOM_OFFSET;
 }
 
-// 节流函数
 function throttle(func: () => void, delay: number) {
   let lastCall = 0;
   return () => {
@@ -55,19 +30,49 @@ function throttle(func: () => void, delay: number) {
     }
   };
 }
+
 const throttleScroll = throttle(handleScroll, 50);
 
-// 卸载监听器
+const bindScrollListener = () => {
+  const chatPane = getScrollContainer();
+  chatPane?.removeEventListener("scroll", throttleScroll);
+  chatPane?.addEventListener("scroll", throttleScroll);
+};
+
+watch(
+  () => store.messages,
+  async () => {
+    await nextTick();
+    bindScrollListener();
+
+    if (store.userScrolled) return;
+    scrollToBottom();
+  },
+  { deep: true },
+);
+
+watch(
+  () => store.prohibit,
+  async (prohibit) => {
+    if (prohibit || store.userScrolled) return;
+    await nextTick();
+    scrollToBottom();
+  },
+);
+
+onMounted(async () => {
+  await nextTick();
+  bindScrollListener();
+});
+
 onUnmounted(() => {
-  const chatPane = document.querySelector(".chat-pane");
+  const chatPane = getScrollContainer();
   chatPane?.removeEventListener("scroll", throttleScroll);
 });
 </script>
 
 <template>
   <div class="chat-pane">
-    <!-- <SystemAvatar /> -->
-    <!-- <SmartSuggestions /> -->
     <ChatHistory />
   </div>
 </template>
@@ -77,10 +82,8 @@ onUnmounted(() => {
   background-color: white;
   flex: 1;
   margin-top: 70px;
-  // margin-bottom: 120px;
   margin-bottom: 100px;
   height: 557px;
-  overflow-y: auto;
-  // border: 2px solid red;
+  overflow: hidden;
 }
 </style>

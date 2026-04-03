@@ -25,6 +25,7 @@ export type ServerGoodsDetailsItem = {
 
 // 单条对话的格式
 export type ChatMessage = {
+  id?: string;
   role: "user" | "assistant";
   content: SendMessage;
   rawContent?: string;
